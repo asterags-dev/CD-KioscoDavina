@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiosco Davina | Siempre algo nuevo para llevar</title>
+    
+    <!-- Google Fonts: Inter (Modern Sans-serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons (Clean, modern icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        davina: {
+                            white: '#FAFAFA', // Blanco cálido
+                            black: '#2D3748', // Negro suave / Gris oscuro
+                            blue: '#3B82F6', // Azul eléctrico suave
+                            yellow: '#FBBF24', // Amarillo moderno
+                            coral: '#FB7185', // Rojo coral
+                            green: '#34D399', // Verde lima suave para WhatsApp
+                            gray: '#F1F5F9' // Gris claro para fondos secundarios
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom scrollbar for horizontal categories */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            background-color: #FAFAFA;
+            color: #2D3748;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Smooth transitions */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col font-sans">
+
+    <!-- Navbar -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <!-- Logo / Brand -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="filterCategory('Todo')">
+                <div class="w-8 h-8 rounded-full bg-davina-blue flex items-center justify-center text-white font-bold text-lg">
+                    D
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-tight text-davina-black">Kiosco Davina</h1>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-widest font-medium">Siempre algo nuevo</p>
+                </div>
+            </div>
+
+            <!-- Cart Icon -->
+            <button onclick="toggleCart()" class="relative p-2 rounded-full hover:bg-gray-100 transition-colors">
+                <i class="ph ph-shopping-bag text-2xl text-davina-black"></i>
+                <span id="cart-badge" class="absolute top-0 right-0 bg-davina-coral text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">
+                    0
+                </span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto w-full px-4 pt-6 pb-24">
+        
+        <!-- Welcome Banner -->
+        <div class="bg-davina-gray rounded-2xl p-6 mb-8 relative overflow-hidden">
+            <div class="relative z-10">
+                <span class="inline-block px-3 py-1 bg-davina-yellow text-yellow-900 text-xs font-bold rounded-full mb-3">
+                    Novedades
+                </span>
+                <h2 class="text-2xl font-bold text-davina-black mb-2">Descubrí lo nuevo de esta semana</h2>
+                <p class="text-sm text-gray-600 mb-4 max-w-xs">Soluciones rápidas, regalos copados y tus clásicos de siempre.</p>
+            </div>
+            <!-- Decorative circle -->
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-davina-blue rounded-full opacity-10 blur-2xl"></div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative mb-6">
+            <i class="ph ph-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
+            <input type="text" id="searchInput" placeholder="¿Qué estás buscando hoy?" 
+                class="w-full bg-white border border-gray-200 rounded-xl py-3 pl-12 pr-4 text-sm focus:outline-none focus:border-davina-blue focus:ring-1 focus:ring-davina-blue transition-all shadow-sm">
+        </div>
+
+        <!-- Categories -->
+        <div class="mb-8">
+            <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-2" id="category-container">
+                <!-- Categories injected via JS -->
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <!-- Products injected via JS -->
+        </div>
+
+        <!-- Empty State (Hidden by default) -->
+        <div id="empty-state" class="hidden text-center py-12">
+            <i class="ph ph-confetti text-4xl text-gray-300 mb-3"></i>
+            <p class="text-gray-500 text-sm">No encontramos ese producto, <br>¡pero seguro tenemos otra cosa copada!</p>
+        </div>
+    </main>
+
+    <!-- Cart Sidebar / Modal -->
+    <div id="cart-overlay" class="fixed inset-0 bg-davina-black/40 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300"></div>
+    
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full md:w-[400px] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <!-- Cart Header -->
+        <div class="flex items-center justify-between p-5 border-b border-gray-100">
+            <h2 class="text-lg font-bold flex items-center gap-2">
+                <i class="ph ph-shopping-bag"></i> Tu Pedido
+            </h2>
+            <button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <i class="ph ph-x text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Cart Items -->
+        <div id="cart-items" class="flex-grow overflow-y-auto p-5 flex flex-col gap-4">
+            <!-- Cart items injected via JS -->
+            <div id="cart-empty-msg" class="text-center text-gray-400 mt-10">
+                <i class="ph ph-shopping-cart text-5xl mb-2 opacity-50"></i>
+                <p>Tu carrito está vacío.</p>
+                <p class="text-sm mt-1">¡Agregá algo copado!</p>
+            </div>
+        </div>
+
+        <!-- Cart Footer -->
+        <div class="p-5 border-t border-gray-100 bg-gray-50">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-gray-500 font-medium text-sm">Total Estimado</span>
+                <span id="cart-total" class="text-xl font-bold text-davina-black">$0</span>
+            </div>
+            <button onclick="sendWhatsAppOrder()" class="w-full bg-[#25D366] hover:bg-[#20b958] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-soft">
+                <i class="ph-fill ph-whatsapp text-xl"></i>
+                Pedir por WhatsApp
+            </button>
+            <p class="text-[11px] text-center text-gray-400 mt-3">El pago se acuerda al momento de retirar/recibir.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- Data: Brand Categories ---
+        const categories = [
+            "Todo", 
+            "Virales🔥", 
+            "Regalos🎁", 
+            "Urbanos🎒", 
+            "Librería✏️", 
+            "Mates🧉", 
+            "Kiosco🍫", 
+            "Servicios🧵"
+        ];
+
+        // --- Data: Mock Products ---
+        // Using placehold.co with brand colors for realistic placeholders
+        const products = [
+            { id: 1, name: "Paquete Fig. Mundial 2026", price: 2500, category: "Virales🔥", image: "https://drive.google.com/file/d/1_1lAYkVmSmFbNTyyrzjAhTsaJMBPyHYy/view?usp=drive_link", isNew: false },
+            { id: 2, name: "Mate Imperial Virola Acero", price: 15000, category: "Mates🧉", image: "https://placehold.co/400x400/F1F5F9/2D3748?text=Mate", isNew: true },
+            { id: 3, name: "Auriculares Inalámbricos TWS", price: 12500, category: "Urbanos🎒", image: "https://placehold.co/400x400/F1F5F9/3B82F6?text=Auriculares", isNew: true },
+            { id: 4, name: "Riñonera Urbana Negra", price: 8900, category: "Urbanos🎒", image: "https://placehold.co/400x400/F1F5F9/2D3748?text=Rinonera", isNew: false },
+            { id: 5, name: "Fidget Toy / Pop-it", price: 2500, category: "Virales🔥", image: "https://placehold.co/400x400/F1F5F9/FB7185?text=Pop-it", isNew: false },
+            { id: 6, name: "Vaso Térmico Aesthetic", price: 6500, category: "Virales🔥", image: "https://placehold.co/400x400/F1F5F9/FBBF24?text=Vaso", isNew: true },
+            { id: 7, name: "Box Regalo Día de la Madre", price: 18000, category: "Regalos🎁", image: "https://placehold.co/400x400/F1F5F9/FB7185?text=Box+Regalo", isNew: true },
+            { id: 8, name: "Taza de Cerámica Diseño", price: 4500, category: "Regalos🎁", image: "https://placehold.co/400x400/F1F5F9/2D3748?text=Taza", isNew: false },
+            { id: 9, name: "Cuaderno Universitario Pastel", price: 3200, category: "Librería✏️", image: "https://placehold.co/400x400/F1F5F9/3B82F6?text=Cuaderno", isNew: false },
+            { id: 10, name: "Resaltadores Pastel x6", price: 2800, category: "Librería✏️", image: "https://placehold.co/400x400/F1F5F9/34D399?text=Resaltadores", isNew: false },
+            { id: 11, name: "Alfajor Milka Oreo", price: 900, category: "Kiosco🍫", image: "https://placehold.co/400x400/F1F5F9/2D3748?text=Alfajor", isNew: false },
+            { id: 12, name: "Gomitas Mogul Rollo", price: 450, category: "Kiosco🍫", image: "https://placehold.co/400x400/F1F5F9/2D3748?text=Gomitas", isNew: false },
+            { id: 13, name: "Cambio de Cierre (Prenda)", price: 3500, category: "Servicios🧵", image: "https://placehold.co/400x400/F1F5F9/2D3748?text=Arreglos", isNew: false },
+        ];
+
+        // --- State Variables ---
+        let currentCategory = "Todo";
+        let searchQuery = "";
+        let cart = [];
+        const STORE_PHONE = "5491100000000"; // Reemplazar con el número real de WhatsApp del negocio
+
+        // --- DOM Elements ---
+        const categoryContainer = document.getElementById('category-container');
+        const productGrid = document.getElementById('product-grid');
+        const emptyState = document.getElementById('empty-state');
+        const searchInput = document.getElementById('searchInput');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const cartBadge = document.getElementById('cart-badge');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartEmptyMsg = document.getElementById('cart-empty-msg');
+        const cartTotalEl = document.getElementById('cart-total');
+
+        // --- Initialize App ---
+        function init() {
+            renderCategories();
+            renderProducts();
+            loadCart();
+            setupSearch();
+        }
+
+        // --- Render Categories ---
+        function renderCategories() {
+            categoryContainer.innerHTML = categories.map(cat => `
+                <button onclick="filterCategory('${cat}')" 
+                    class="whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium transition-colors ${currentCategory === cat ? 'bg-davina-black text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        // --- Filter by Category ---
+        window.filterCategory = (cat) => {
+            currentCategory = cat;
+            renderCategories();
+            renderProducts();
+        };
+
+        // --- Setup Search ---
+        function setupSearch() {
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase();
+                renderProducts();
+            });
+        }
+
+        // --- Format Currency ---
+        const formatPrice = (price) => {
+            return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(price);
+        };
+
+        // --- Render Products ---
+        function renderProducts() {
+            let filtered = products;
+
+            // Apply category filter
+            if (currentCategory !== "Todo") {
+                filtered = filtered.filter(p => p.category === currentCategory);
+            }
+
+            // Apply search filter
+            if (searchQuery.trim() !== "") {
+                filtered = filtered.filter(p => p.name.toLowerCase().includes(searchQuery));
+            }
+
+            // Show empty state if no products
+            if (filtered.length === 0) {
+                productGrid.innerHTML = "";
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            productGrid.innerHTML = filtered.map(product => `
+                <div class="bg-white rounded-2xl p-3 shadow-soft flex flex-col fade-in relative group hover:shadow-md transition-shadow">
+                    ${product.isNew ? `<span class="absolute top-4 left-4 z-10 bg-davina-yellow text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wide">Nuevo</span>` : ''}
+                    
+                    <div class="aspect-square bg-gray-50 rounded-xl overflow-hidden mb-3 relative">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover mix-blend-multiply transition-transform duration-300 group-hover:scale-105">
+                    </div>
+                    
+                    <div class="flex flex-col flex-grow">
+                        <span class="text-[10px] text-davina-blue font-semibold mb-1">${product.category.replace(/[^a-zA-Z]/g, '')}</span>
+                        <h3 class="text-sm font-medium text-davina-black leading-tight mb-2 flex-grow">${product.name}</h3>
+                        <div class="flex items-center justify-between mt-auto">
+                            <span class="font-bold text-davina-black">${formatPrice(product.price)}</span>
+                            <button onclick="addToCart(${product.id})" class="w-8 h-8 rounded-full bg-davina-gray text-davina-black flex items-center justify-center hover:bg-davina-blue hover:text-white transition-colors">
+                                <i class="ph ph-plus font-bold"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- Cart Logic ---
+        window.addToCart = (productId) => {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            saveCart();
+            updateCartUI();
+            
+            // Visual feedback (optional small vibration on mobile)
+            if (navigator.vibrate) navigator.vibrate(50);
+        };
+
+        window.removeFromCart = (productId) => {
+            cart = cart.filter(item => item.id !== productId);
+            saveCart();
+            updateCartUI();
+        };
+
+        window.updateQuantity = (productId, change) => {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    saveCart();
+                    updateCartUI();
+                }
+            }
+        };
+
+        function saveCart() {
+            localStorage.setItem('davina_cart', JSON.stringify(cart));
+        }
+
+        function loadCart() {
+            const savedCart = localStorage.getItem('davina_cart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+                updateCartUI();
+            }
+        }
+
+        // --- Update Cart UI ---
+        function updateCartUI() {
+            // Update badge
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (totalItems > 0) {
+                cartBadge.textContent = totalItems;
+                cartBadge.classList.remove('hidden');
+                cartEmptyMsg.classList.add('hidden');
+            } else {
+                cartBadge.classList.add('hidden');
+                cartEmptyMsg.classList.remove('hidden');
+            }
+
+            // Update Items List
+            cartItemsContainer.innerHTML = cart.length === 0 ? '' : cart.map(item => `
+                <div class="flex items-center gap-3 bg-white border border-gray-100 p-3 rounded-xl shadow-sm">
+                    <img src="${item.image}" alt="${item.name}" class="w-14 h-14 object-cover rounded-lg bg-gray-50">
+                    <div class="flex-grow">
+                        <h4 class="text-sm font-medium text-davina-black leading-tight line-clamp-1">${item.name}</h4>
+                        <div class="text-davina-blue font-bold text-sm mt-1">${formatPrice(item.price)}</div>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-50 rounded-lg p-1 border border-gray-100">
+                        <button onclick="updateQuantity(${item.id}, -1)" class="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-davina-black"><i class="ph ph-minus"></i></button>
+                        <span class="text-sm font-medium w-4 text-center">${item.quantity}</span>
+                        <button onclick="updateQuantity(${item.id}, 1)" class="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-davina-black"><i class="ph ph-plus"></i></button>
+                    </div>
+                </div>
+            `).join('');
+
+            if(cart.length === 0) {
+                 cartItemsContainer.appendChild(cartEmptyMsg);
+            }
+
+            // Update Total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartTotalEl.textContent = formatPrice(total);
+        }
+
+        // --- Toggle Cart Modal ---
+        window.toggleCart = () => {
+            const isHidden = cartOverlay.classList.contains('hidden');
+            
+            if (isHidden) {
+                // Open
+                cartOverlay.classList.remove('hidden');
+                // Small delay to allow display:block to apply before animating opacity
+                setTimeout(() => {
+                    cartOverlay.classList.remove('opacity-0');
+                    cartSidebar.classList.remove('translate-x-full');
+                }, 10);
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            } else {
+                // Close
+                cartOverlay.classList.add('opacity-0');
+                cartSidebar.classList.add('translate-x-full');
+                setTimeout(() => {
+                    cartOverlay.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }, 300); // Wait for transition
+            }
+        };
+
+        // Close modal on overlay click
+        cartOverlay.addEventListener('click', toggleCart);
+
+        // --- Send WhatsApp Order ---
+        window.sendWhatsAppOrder = () => {
+            if (cart.length === 0) return;
+
+            let text = `¡Hola *Kiosco Davina*! 👋\nQuiero hacer el siguiente pedido:\n\n`;
+            
+            cart.forEach(item => {
+                text += `▪ ${item.quantity}x ${item.name} - ${formatPrice(item.price * item.quantity)}\n`;
+            });
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            text += `\n*Total estimado:* ${formatPrice(total)}\n\n`;
+            text += `¿Me avisan para pasar a retirarlo? Gracias! ✨`;
+
+            const encodedText = encodeURIComponent(text);
+            const whatsappUrl = `https://wa.me/${STORE_PHONE}?text=${encodedText}`;
+            
+            window.open(whatsappUrl, '_blank');
+            
+            // Optional: clear cart after ordering
+            // cart = [];
+            // saveCart();
+            // updateCartUI();
+            // toggleCart();
+        };
+
+        // Run Init
+        document.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>
