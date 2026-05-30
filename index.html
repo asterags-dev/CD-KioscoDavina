@@ -59,6 +59,13 @@
         /* Smooth transitions */
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Image Modal Styles */
+        #image-modal {
+            transition: opacity 0.3s ease;
+        }
+        #image-modal-img {
+            transition: transform 0.3s ease;
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col font-sans">
@@ -68,8 +75,9 @@
         <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
             <!-- Logo / Brand -->
             <div class="flex items-center gap-2 cursor-pointer" onclick="filterCategory('Todo')">
-                <div class="w-8 h-8 rounded-full bg-davina-blue flex items-center justify-center text-white font-bold text-lg">
-                    D
+                <div class="w-10 h-10 rounded-full bg-davina-gray flex items-center justify-center overflow-hidden border border-gray-200">
+                    <!-- Reemplaza el src con la URL de tu logo real -->
+                    <img id="brand-logo" src="https://placehold.co/100x100/3B82F6/FFFFFF?text=KD" alt="Logo Kiosco Davina" class="w-full h-full object-cover">
                 </div>
                 <div>
                     <h1 class="font-bold text-lg leading-tight tracking-tight text-davina-black">Kiosco Davina</h1>
@@ -89,17 +97,17 @@
 
     <main class="flex-grow max-w-5xl mx-auto w-full px-4 pt-6 pb-24">
         
-        <!-- Welcome Banner -->
-        <div class="bg-davina-gray rounded-2xl p-6 mb-8 relative overflow-hidden">
+        <!-- Welcome Banner / Seasonal Banner -->
+        <!-- Cambia la URL de fondo y los textos para cada temporada -->
+        <div class="rounded-2xl p-6 mb-8 relative overflow-hidden shadow-sm bg-gray-900" style="background-image: url('https://placehold.co/800x300/1e3a8a/ffffff?text=Fondo+Banner'); background-size: cover; background-position: center;">
+            <div class="absolute inset-0 bg-black/40"></div> <!-- Capa oscura para que el texto se lea bien -->
             <div class="relative z-10">
-                <span class="inline-block px-3 py-1 bg-davina-yellow text-yellow-900 text-xs font-bold rounded-full mb-3">
-                    Novedades
+                <span class="inline-block px-3 py-1 bg-davina-yellow text-yellow-900 text-xs font-bold rounded-full mb-3 shadow-sm">
+                    Especial del Mes
                 </span>
-                <h2 class="text-2xl font-bold text-davina-black mb-2">Descubrí lo nuevo de esta semana</h2>
-                <p class="text-sm text-gray-600 mb-4 max-w-xs">Soluciones rápidas, regalos copados y tus clásicos de siempre.</p>
+                <h2 class="text-2xl font-bold text-white mb-2 drop-shadow-md">¡Preparate para el Mundial!</h2>
+                <p class="text-sm text-gray-200 mb-4 max-w-xs drop-shadow-md">Encontrá álbumes, figuritas y todo el cotillón para alentar.</p>
             </div>
-            <!-- Decorative circle -->
-            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-davina-blue rounded-full opacity-10 blur-2xl"></div>
         </div>
 
         <!-- Search Bar -->
@@ -127,6 +135,14 @@
             <p class="text-gray-500 text-sm">No encontramos ese producto, <br>¡pero seguro tenemos otra cosa copada!</p>
         </div>
     </main>
+
+    <!-- Image Modal (For viewing product photos) -->
+    <div id="image-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden opacity-0 flex items-center justify-center p-4" onclick="closeImageModal()">
+        <button class="absolute top-4 right-4 text-white p-2 hover:bg-white/20 rounded-full transition-colors z-[61]" onclick="closeImageModal()">
+            <i class="ph ph-x text-2xl font-bold"></i>
+        </button>
+        <img id="image-modal-img" src="" alt="Producto" class="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl scale-95" onclick="event.stopPropagation()">
+    </div>
 
     <!-- Cart Sidebar / Modal -->
     <div id="cart-overlay" class="fixed inset-0 bg-davina-black/40 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300"></div>
@@ -180,6 +196,8 @@
             "Servicios🧵"
         ];
 
+       
+
         // --- Data: Mock Products ---
         // Using placehold.co with brand colors for realistic placeholders
         const products = [
@@ -202,7 +220,7 @@
         let currentCategory = "Todo";
         let searchQuery = "";
         let cart = [];
-        const STORE_PHONE = "5491163322630"; // Reemplazar con el número real de WhatsApp del negocio
+        const STORE_PHONE = "5491100000000"; // Reemplazar con el número real de WhatsApp del negocio
 
         // --- DOM Elements ---
         const categoryContainer = document.getElementById('category-container');
@@ -281,8 +299,11 @@
                 <div class="bg-white rounded-2xl p-3 shadow-soft flex flex-col fade-in relative group hover:shadow-md transition-shadow">
                     ${product.isNew ? `<span class="absolute top-4 left-4 z-10 bg-davina-yellow text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wide">Nuevo</span>` : ''}
                     
-                    <div class="aspect-square bg-gray-50 rounded-xl overflow-hidden mb-3 relative">
+                    <div class="aspect-square bg-gray-50 rounded-xl overflow-hidden mb-3 relative cursor-pointer" onclick="openImageModal('${product.image}')">
                         <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover mix-blend-multiply transition-transform duration-300 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
+                            <i class="ph ph-arrows-out text-white opacity-0 group-hover:opacity-100 transition-opacity text-xl drop-shadow-md"></i>
+                        </div>
                     </div>
                     
                     <div class="flex flex-col flex-grow">
@@ -412,6 +433,43 @@
 
         // Close modal on overlay click
         cartOverlay.addEventListener('click', toggleCart);
+
+        // --- Image Modal Logic ---
+        const imageModal = document.getElementById('image-modal');
+        const imageModalImg = document.getElementById('image-modal-img');
+
+        window.openImageModal = (imageUrl) => {
+            imageModalImg.src = imageUrl;
+            imageModal.classList.remove('hidden');
+            // Timeout to allow display block to apply before animating opacity/scale
+            setTimeout(() => {
+                imageModal.classList.remove('opacity-0');
+                imageModalImg.classList.remove('scale-95');
+                imageModalImg.classList.add('scale-100');
+            }, 10);
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        };
+
+        window.closeImageModal = () => {
+            imageModal.classList.add('opacity-0');
+            imageModalImg.classList.remove('scale-100');
+            imageModalImg.classList.add('scale-95');
+            setTimeout(() => {
+                imageModal.classList.add('hidden');
+                imageModalImg.src = '';
+                // Only restore scrolling if cart is also closed
+                if (cartOverlay.classList.contains('hidden')) {
+                    document.body.style.overflow = '';
+                }
+            }, 300); // Match transition duration
+        };
+
+        // Close image modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !imageModal.classList.contains('hidden')) {
+                closeImageModal();
+            }
+        });
 
         // --- Send WhatsApp Order ---
         window.sendWhatsAppOrder = () => {
