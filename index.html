@@ -187,6 +187,7 @@
         // --- Data: Brand Categories ---
         const categories = [
             "Todo", 
+            "Dia del Padre👨🏻‍🍼",
             "Virales🔥", 
             "Regalos🎁", 
             "Urbanos🎒", 
@@ -204,8 +205,8 @@
         const products = [
             { id: 1, name: "Paquete Fig. Mundial 2026", price: 2500, category: "Virales🔥", image: "https://i.postimg.cc/pX3K9Y3F/IECJOGRSO5B4XMEF2FLKFUJEO4.avif", isNew: true },
             { id: 2, name: "Album Mundial 2026 br", price: 25000, category: "Virales🔥", image: "https://i.postimg.cc/fW92TKHG/D-NQ-NP-2X-778982-MLA111966119571-052026-F.webp", isNew: true },
-            { id: 3, name: "Billetera de Hombre Negra ", price: 6000, category: "Urbanos🎒", image: "https://i.postimg.cc/65HYMmTT/Whats-App-Image-2026-05-28-at-22-00-46.jpg", isNew: true },
-            { id: 4, name: "Billetera de Hombre Marron", price: 6000, category: "Urbanos🎒", image: "https://i.postimg.cc/c4DXFb6r/Whats-App-Image-2026-05-28-at-22-00-46-(1).jpg", isNew: true },
+            { id: 3, name: "Billetera de Hombre Negra ", price: 6000, category: "Dia del Padre👨🏻‍🍼", image: "https://i.postimg.cc/65HYMmTT/Whats-App-Image-2026-05-28-at-22-00-46.jpg", isNew: true },
+            { id: 4, name: "Billetera de Hombre Marron", price: 6000, category: "Dia del Padre👨🏻‍🍼", image: "https://i.postimg.cc/c4DXFb6r/Whats-App-Image-2026-05-28-at-22-00-46-(1).jpg", isNew: true },
             { id: 5, name: "Bolso / Cartera Grande", price: 50000, category: "Urbanos🎒", image: "https://i.postimg.cc/bwjX3kg4/Gemini-Generated-Image-ckvcngckvcngckvc.png", isNew: true },
             { id: 6, name: "Llavero espejo doble", price: 6000, category: "Urbanos🎒", image: "https://i.postimg.cc/SKMD5vKT/Whats-App-Image-2026-05-30-at-11-41-34-(1).jpg", isNew: true },
             { id: 7, name: "Llaveros personajes", price: 3000, category: "Regalos🎁", image: "https://i.postimg.cc/mrH8q5rp/Whats-App-Image-2026-05-30-at-11-41-34.jpg", isNew: true },
@@ -219,9 +220,15 @@
             { id: 15, name: "Bolso / Cartera Grande", price: 45000, category: "Urbanos🎒", image: "https://i.postimg.cc/G2rk9RWz/Gemini-Generated-Image-mf9il0mf9il0mf9i.png", isNew: true },
             { id: 16, name: "Bolso / Cartera Grande", price: 45000, category: "Urbanos🎒", image: "https://i.postimg.cc/MTxyXwC3/Gemini-Generated-Image-5hu74h5hu74h5hu7.png", isNew: true },
             { id: 17, name: "Mochila pequeña", price: 45000, category: "Urbanos🎒", image: "https://i.postimg.cc/d1v8DFbS/Gemini-Generated-Image-8conr48conr48con.png", isNew: true },
-            { id: 18, name: "Cambio de Cierre (Prenda)", price: 3500, category: "Servicios🧵", image: "https://placehold.co/400x400/F1F5F9/2D3748?text=Arreglos", isNew: false },
-            { id: 19, name: "Cambio de Cierre (Prenda)", price: 3500, category: "Servicios🧵", image: "https://placehold.co/400x400/F1F5F9/2D3748?text=Arreglos", isNew: false },
-            { id: 20, name: "Cambio de Cierre (Prenda)", price: 3500, category: "Servicios🧵", image: "https://placehold.co/400x400/F1F5F9/2D3748?text=Arreglos", isNew: false },
+            { id: 18, name: "Juego de Asado", price: 25000, category: "Dia del Padre👨🏻‍🍼", image: "https://i.postimg.cc/rFFbHXPp/Gemini-Generated-Image-nb56n4nb56n4nb56.png", isNew: true },
+            { id: 19, name: "Porta Termo canasta cuadrada", price: 20000, category: "Dia del Padre👨🏻‍🍼", image: "https://i.postimg.cc/DzsYG28q/Gemini-Generated-Image-sqkuwlsqkuwlsqku.png", isNew: true },
+            { id: 20, name: "Porta mate", price: 7500, category: "Dia del Padre👨🏻‍🍼", image: "https://i.postimg.cc/TY7SM7zm/Gemini-Generated-Image-scrz9yscrz9yscrz.png", isNew: true },
+            { id: 21, name: "Bolso mochila  Deportivo de viaje", price: 50000, category: "Dia del Padre👨🏻‍🍼", image: "https://i.postimg.cc/TY7SM7z3/Gemini-Generated-Image-es2rkges2rkges2r.png", isNew: true },
+            { id: 22, name: "Neceser Eco Cuero", price: 10000, category: "Dia del Padre👨🏻‍🍼", image: "https://i.postimg.cc/0NmHS8bZ/Gemini-Generated-Image-pzi9l3pzi9l3pzi9.png", isNew: true },
+            { id: 23, name: "Mate listo de acero", price: 25000, category: "Dia del Padre👨🏻‍🍼", image: "https://i.postimg.cc/02W3RWTz/Gemini-Generated-Image-u45ugyu45ugyu45u.png", isNew: true },
+            { id: 24, name: "Botinero ", price: 15000, category: "Dia del Padre👨🏻‍🍼", image: "https://i.postimg.cc/3wpbGKdm/Gemini-Generated-Image-9e53hd9e53hd9e53.png", isNew: true },
+            { id: 25, name: "Porta Yerba y Azucar", price: 8000, category: "Dia del Padre👨🏻‍🍼", image: "https://i.postimg.cc/Zq3DNTCx/Gemini-Generated-Image-l7jdnpl7jdnpl7jd.png", isNew: true },
+            
         ];
 
         // --- State Variables ---
